@@ -1,0 +1,37 @@
+
+# Install 
+
+This configuration was tested on ArchLinux (2017-01-09)
+
+1. copy dockerDDNS.py into /usr/local/sbin/
+2. Change permission to let root execute file (chmod 766 /usr/local/sbin/dockerDDNS.py)
+2. copy dockerDDNS.service into /etc/systemd/system
+3. finaly copy dockerDDNS into /etc/conf.d/
+4. Edit file /etc/conf.d/dockerDDNS , fix Variables for your needs
+5. reload systemd configuration file (sudo systemctl daemon-reload)
+
+Installation complet, It's time to TRY :D
+
+1. Validation systemd have the new configuration
+
+        $ systemctl list-unit-files | grep dockerDDN
+        dockerDDNS.service                          disabled
+2. Try to start the new service 
+
+        $ systemctl start dockerDDNS.service
+3. View the status and fix it problems
+
+        $ systemctl status dockerDDNS.service
+        dockerDDNS.service - Update a dynamic DNS when Docker starts containers
+           Loaded: loaded (/etc/systemd/system/dockerDDNS.service; disabled; vendor preset: disabled)
+           Active: active (running) since Mon 2017-01-09 16:43:21 EST; 4s ago
+           Main PID: 2067 (python3)
+           Tasks: 7 (limit: 4915)
+           Memory: 33.4M
+           CPU: 263ms
+           CGroup: /system.slice/dockerDDNS.service
+                   ├─2067 python3 /usr/local/sbin/dockerDDNS.py --key /tmp/bind/key.private --domain dck.example.com. --server 127.0.0.1
+                   └─2083 docker events
+4. Double check, just to be sure :D
+    
+        $ ps aux | grep dockerDDNS
