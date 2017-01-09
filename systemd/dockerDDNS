@@ -1,0 +1,12 @@
+# Configuration file for the DockerDDNS service
+# REF : https://github.com/ggtools/docker-tools
+
+# DNS key to update bind9 server
+DDNS_UPDATE_KEY=/etc/bind/keys/Kdck.example.com.+157+31514.private
+
+# domain to update
+DOMAIN=dck.example.com.
+
+# DNS server
+DNS_SERVER=127.0.0.1
+

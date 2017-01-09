@@ -1,0 +1,13 @@
+[Unit]
+Description=Update a dynamic DNS when Docker starts containers
+After=docker.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/conf.d/dockerDDNS
+ExecStart=/usr/local/sbin/dockerDDNS.py --key $DDNS_UPDATE_KEY --domain $DOMAIN --server $DNS_SERVER --catchup
+PIDFile=/var/run/dockerDDNS
+KillMode=process
+
+[Install]
+WantedBy=default.target
