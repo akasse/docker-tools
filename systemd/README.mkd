@@ -1,0 +1,14 @@
+
+# Install 
+
+This configuration was tested on ArchLinux, for RedHat/CentOS or Ubuntu you need change path 
+
+1. copy dockerDDNS.py into /usr/local/sbin/
+2. Change permission to let root execute file (chmod 766 /usr/local/sbin/dockerDDNS.py)
+2. copy dockerDDNS.service into /etc/systemd/system
+3. finaly copy dockerDDNS into /etc/conf.d/
+4. Edit file /etc/conf.d/dockerDDNS , fix Variables for your needs
+5. reload systemd configuration file (sudo systemctl daemon-reload)
+
+Installation complet, It's time to TRY :D
+
