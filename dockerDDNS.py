@@ -23,7 +23,7 @@ update add {0}.{1} 60 A {2}
 
 zone_update_add_alias_template = """update delete {0}.{1}
 update add {0}.{1} 600 CNAME {2}.{1}.
-update add {2}.{1} 600 TXT dockerDDNS-alias:{0}:
+update add {3}.{1} 600 TXT dockerDDNS-alias:{0}:
 """
 
 zone_update_delete_record_template = """update delete {0}.{1}
@@ -31,6 +31,7 @@ zone_update_delete_record_template = """update delete {0}.{1}
 
 
 def register_container(container_id):
+    container_id_60 = container_id[:60]
     detail = c.inspect_container(container_id)
     container_hostname = detail["Config"]["Hostname"]
     container_name = detail["Name"].split('/', 1)[1]
@@ -45,18 +46,18 @@ def register_container(container_id):
         nsupdate.stdin.write(bytes(zone_update_start_template.format(args.server, args.zone), "UTF-8"))
         nsupdate.stdin.write(bytes(zone_update_template.format(container_hostname, args.domain, container_ip), "UTF-8"))
         if container_name != container_hostname:
-            nsupdate.stdin.write(bytes(zone_update_add_alias_template.format(container_name, args.domain, container_hostname), "UTF-8"))
+            nsupdate.stdin.write(bytes(zone_update_add_alias_template.format(container_name, args.domain, container_hostname,container_id_60), "UTF-8"))
             if re.search("_", container_name):
                 alternate_name = re.sub('_','-',container_name)
                 logging.info("Adding alternate name %s to  %s", alternate_name, container_name)
-                nsupdate.stdin.write(bytes(zone_update_add_alias_template.format(alternate_name, args.domain, container_hostname), "UTF-8"))
+                nsupdate.stdin.write(bytes(zone_update_add_alias_template.format(alternate_name, args.domain, container_hostname,container_id_60), "UTF-8"))
         nsupdate.stdin.write(bytes("send\n", "UTF-8"))
         nsupdate.stdin.close()
 
 
 def remove_container(container_id):
     logging.info("Destroying %s", container_id)
-    short_id = container_id[:12]
+    short_id = container_id[:60]
     record_to_delete = [short_id]
     logging.debug("Looking for alias to %s.%s", short_id, args.domain)
 
