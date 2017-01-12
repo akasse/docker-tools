@@ -130,10 +130,10 @@ while True:
     if line != '':
         text_line = line.decode().rstrip()
         logging.debug("Read line %s", text_line)
-        m = re.search(r"\s+([0-9a-f]{64}):.*\s+([a-z]+)\s*$", text_line)
+        m = re.search(r".*\s+container\s+([a-z]+)\s+([0-9a-f]{64}).*$", text_line)
         if m:
-            event = m.group(2)
-            container_id = m.group(1)
+            event = m.group(1)
+            container_id = m.group(2)
             logging.debug("Got event %s for container %s", event, container_id)
 
             if event == "start":
@@ -146,3 +146,6 @@ while True:
 
 # 2014-11-28T15:32:04.000000000+01:00 a3d66b00acc9adbdbdbc91cc664d2d94b6a07cc4295c5cf54fcc595e2aa92a43: (from mongo:latest) restart
 # 2015-03-05T08:36:14.000000000+01:00 eb75c1a5ad836d008b0fd66bf6b1ea353510175e8caa619e59d9851029b1ceca: (from ggtools/zabbix-server:latest) exec_start: ifconfig eth0
+
+# docker Version: 1.12.1 
+# 2017-01-11T20:46:26.268651386-05:00 container start bc340bc76860452fb99ce15101765107f0cf32005e9fcb3261407d81d247307d (image=ubuntu:14.04, name=toto)
