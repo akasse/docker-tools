@@ -23,8 +23,7 @@ update add {0}.{1} 60 A {2}
 
 zone_update_add_alias_template = """update delete {0}.{1}
 update add {0}.{1} 600 CNAME {2}.{1}.
-update add {3}.{1} 600 TXT dockerDDNS-alias:{0}:
-update add {3}.{1} 600 TXT dockerDDNS-alias:{2}:
+update add {3}.{1} 600 TXT dockerDDNS-alias:{0},{2}:
 """
 
 zone_update_delete_record_template = """update delete {0}.{1}
@@ -69,7 +68,8 @@ def remove_container(container_id):
                 logging.debug("Checking TXT record %s for alias", answer)
                 match = re.search(r"dockerDDNS-alias:([^:]+):", answer.to_text())
                 if match:
-                    record_to_delete.append(match.group(1))
+                    for alias_entry in match.group(1).split(","):
+                        record_to_delete.append(alias_entry)
     except DNSException as e:
         logging.error("Cannot get TXT record for %s: %s", short_id, e)
     except:
