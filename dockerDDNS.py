@@ -6,7 +6,7 @@ import argparse
 import re
 import logging
 import sys
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, run
 from docker import Client
 from docker.utils import kwargs_from_env
 from dns.resolver import Resolver
@@ -29,6 +29,7 @@ update add {3}.{1} 600 TXT dockerDDNS-alias:{0},{2}:
 zone_update_delete_record_template = """update delete {0}.{1}
 """
 
+puppet_directory = "/etc/puppet/manifests/"
 
 def register_container(container_id):
     container_id_60 = container_id[:60]
@@ -122,6 +123,9 @@ if args.catchup:
     containers = c.containers()
     for container in containers:
         register_container(container["Id"])
+    # Update puppet configuration files 
+    run(["/usr/local/sysadmin/host2IP.py","-d", "/etc/puppet/manifests/"])
+
 
 
 # TODO use docker-py streaming API
@@ -142,6 +146,9 @@ while True:
                 register_container(container_id)
             elif event == "destroy":
                 remove_container(container_id)
+
+            # Update puppet configuration files 
+            run(["/usr/local/sysadmin/host2IP.py","-d", "/etc/puppet/manifests/"])
     else:
         print("Done return code: ", events_pipe.returncode)
         break
